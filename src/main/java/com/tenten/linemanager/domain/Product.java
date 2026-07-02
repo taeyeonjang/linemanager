@@ -13,6 +13,7 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
+    @Column(unique = true)
     private String serialNumber;
 
     @Enumerated(EnumType.STRING)

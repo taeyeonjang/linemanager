@@ -1,16 +1,39 @@
 package com.tenten.linemanager.repository;
 
+import com.tenten.linemanager.domain.Product;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
+@RequiredArgsConstructor
 public class ProductRepository {
-    EntityManager em;
-    //제품 생성
-    public void save() {
-        
+    private final EntityManager em;
+
+    //jpa표준 방법은 @PersistanceContext / private EntityManger em  / 생성자 주입
+
+    //저장 (생성)
+    public void save(Product product) {
+        em.persist(product);
     }
+
     //시리얼번호로 조회
+    public Optional<Product> findBySerialNumber(String serialNum) {
+        return em.createQuery("select p from Product p where p.serialNumber = :SN", Product.class)
+                .setParameter("SN", serialNum )
+                .getResultStream()
+                .findFirst();
+    }
 
     //전체 조회
+    public List<Product> findAll() {
+        return em.createQuery("select p from Product p", Product.class)
+                .getResultList();
+    }
+
 }
