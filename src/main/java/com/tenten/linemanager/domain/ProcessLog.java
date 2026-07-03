@@ -22,4 +22,20 @@ public class ProcessLog {
 
     private LocalDateTime processedAt;
 
+    private LocalDateTime completedAt;
+
+
+    public static ProcessLog create(Product product, int processNo, ResultState result) {
+        ProcessLog processLog = new ProcessLog();
+        processLog.product = product;
+        processLog.processNo = processNo;
+        processLog.result = result;
+        processLog.processedAt = LocalDateTime.now();
+
+        return processLog;
+    }
+
+    public void update() {
+        completedAt = LocalDateTime.now();
+    }
 }

@@ -21,4 +21,21 @@ public class Product {
 
     private LocalDateTime createdAt;
 
+    private LocalDateTime completedAt;
+
+
+    public static Product create(String serialNumber) {
+        Product product = new Product();
+        product.serialNumber = serialNumber;
+        product.finalResult = ResultState.INIT;
+        product.createdAt = LocalDateTime.now();
+
+        return product;
+    }
+
+    public void update(ResultState result, LocalDateTime completedTime) {
+        this.finalResult = result;
+        this.completedAt = completedTime;
+    }
+
 }
