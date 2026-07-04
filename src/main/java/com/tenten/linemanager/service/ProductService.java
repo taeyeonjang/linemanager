@@ -19,12 +19,21 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public void createProduct() {
-        String serialNumber = getSerialNumber();
+    public Product createProduct() {
+        return createProduct(getSerialNumber());
+    }
+
+    public Product createProduct(String serialNumber) {
+
+        if(productRepository.findBySerialNumber(serialNumber).isPresent()) {
+            throw new IllegalStateException("이미 존재하는 시리얼번호입니다.");
+        }
 
         Product product = Product.create(serialNumber);
 
         productRepository.save(product);
+
+        return product;
     }
 
     private String getSerialNumber() {
@@ -36,8 +45,10 @@ public class ProductService {
     }
 
     public void updateFinalResult(Product product, ResultState result) {
-        product.update(result, LocalDateTime.now());
+        product.update(result);
     }
+
+
 
     @Transactional(readOnly = true)
     public Optional<Product> findOne(String serialNumber) {
@@ -48,4 +59,9 @@ public class ProductService {
     public List<Product> findAll() {
         return productRepository.findAll();
     }
+
+//    public void init() {
+//        productRepository.init();
+//    }
+
 }

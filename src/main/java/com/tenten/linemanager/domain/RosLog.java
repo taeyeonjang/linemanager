@@ -22,4 +22,20 @@ public class RosLog {
     private ResultState rosState;
 
     private LocalDateTime decidedAt;
+    private LocalDateTime completedAt;
+
+    public static RosLog create(Product product) {
+        RosLog rosLog = new RosLog();
+        rosLog.product = product;
+        rosLog.operatorDecision = ResultState.INIT;
+        rosLog.rosState = ResultState.INIT;
+        rosLog.decidedAt = LocalDateTime.now();
+
+        return rosLog;
+    }
+
+    public void update(ResultState result) {
+        this.operatorDecision = result;
+        this.completedAt = LocalDateTime.now();
+    }
 }

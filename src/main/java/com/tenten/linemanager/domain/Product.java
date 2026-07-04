@@ -3,6 +3,7 @@ package com.tenten.linemanager.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,9 +34,8 @@ public class Product {
         return product;
     }
 
-    public void update(ResultState result, LocalDateTime completedTime) {
+    public void update(ResultState result) {
         this.finalResult = result;
-        this.completedAt = completedTime;
+        this.completedAt = LocalDateTime.now();
     }
-
 }

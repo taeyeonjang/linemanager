@@ -17,11 +17,13 @@ public class ProcessLogService {
 
     private final ProcessLogRepository processLogRepository;
 
-    public void createProcessLog(Product product, int processNo, ResultState result) {
+    public ProcessLog createProcessLog(Product product, int processNo, ResultState result) {
 
         ProcessLog processLog = ProcessLog.create(product, processNo, result);
 
         processLogRepository.save(processLog);
+
+        return processLog;
     }
 
     @Transactional

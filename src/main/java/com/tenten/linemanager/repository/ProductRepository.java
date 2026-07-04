@@ -36,4 +36,8 @@ public class ProductRepository {
                 .getResultList();
     }
 
+//    public void init() {
+//        em.createQuery("delete from Product").executeUpdate();
+//    }
+
 }
