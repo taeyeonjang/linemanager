@@ -17,9 +17,9 @@ public class ProcessLogService {
 
     private final ProcessLogRepository processLogRepository;
 
-    public ProcessLog createProcessLog(Product product, int processNo, ResultState result) {
+    public ProcessLog createProcessLog(Product product, int processNo) {
 
-        ProcessLog processLog = ProcessLog.create(product, processNo, result);
+        ProcessLog processLog = ProcessLog.create(product, processNo);
 
         processLogRepository.save(processLog);
 
@@ -27,8 +27,8 @@ public class ProcessLogService {
     }
 
     @Transactional
-    public void updateCompltedAt(ProcessLog processLog) {
-        processLog.update();
+    public void updateProcessResult(ProcessLog processLog, ResultState result) {
+        processLog.update(result);
     }
 
     @Transactional(readOnly = true)
