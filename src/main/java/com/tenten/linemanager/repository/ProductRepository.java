@@ -1,5 +1,6 @@
 package com.tenten.linemanager.repository;
 
+import com.tenten.linemanager.domain.LineStatus;
 import com.tenten.linemanager.domain.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -22,6 +23,12 @@ public class ProductRepository {
         em.persist(product);
     }
 
+    //Id로 조회
+
+    public Optional<Product> findById(Long id) {
+        return Optional.ofNullable(em.find(Product.class, id));
+    }
+
     //시리얼번호로 조회
     public Optional<Product> findBySerialNumber(String serialNum) {
         return em.createQuery("select p from Product p where p.serialNumber = :SN", Product.class)
@@ -33,6 +40,13 @@ public class ProductRepository {
     //전체 조회
     public List<Product> findAll() {
         return em.createQuery("select p from Product p", Product.class)
+                .getResultList();
+    }
+
+    //상태 조회
+    public List<Product> findByStatus(LineStatus status) {
+        return em.createQuery("select p from Product p where p.status = :st", Product.class)
+                .setParameter("st", status)
                 .getResultList();
     }
 

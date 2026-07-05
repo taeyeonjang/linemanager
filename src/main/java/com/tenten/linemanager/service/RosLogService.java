@@ -3,6 +3,7 @@ package com.tenten.linemanager.service;
 import com.tenten.linemanager.domain.Product;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
+import com.tenten.linemanager.repository.ProductRepository;
 import com.tenten.linemanager.repository.RosLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,12 @@ import java.util.Optional;
 public class RosLogService {
 
     private final RosLogRepository rosLogRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
-    public RosLog createRosLog(Product product) {
+    public RosLog createRosLog(Long productId) {
+
+        Product product = productRepository.findById(productId).orElseThrow();
 
         RosLog rosLog = RosLog.create(product);
 
@@ -30,8 +34,13 @@ public class RosLogService {
     }
 
     @Transactional
-    public void update(RosLog rosLog, ResultState result) {
+    public RosLog update(Long rosLogId, ResultState result) {
+
+        RosLog rosLog = rosLogRepository.findById(rosLogId).orElseThrow(() -> new IllegalStateException("없는 RosLog입니다. rosLogId = " + rosLogId));
+
         rosLog.update(result);
+
+        return rosLog;
     }
 
     public Optional<RosLog> findOne(String serialNumber) {

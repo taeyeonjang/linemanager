@@ -1,5 +1,6 @@
 package com.tenten.linemanager.service;
 
+import com.tenten.linemanager.domain.Product;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
 import org.assertj.core.api.Assertions;
@@ -35,7 +36,7 @@ class RosLogServiceTest {
     public void ROS결과_업데이트() {
         RosLog rosLog = createRosLogWithProduct();
 
-        rosLogService.update(rosLog, ResultState.NG);
+        rosLogService.update(rosLog.getId(), ResultState.NG);
 
         Assertions.assertThat(rosLog.getOperatorDecision()).isEqualTo(ResultState.NG);
     }
@@ -45,15 +46,15 @@ class RosLogServiceTest {
 
         RosLog rosLogA = createRosLogWithProduct();
 
-        rosLogService.update(rosLogA, ResultState.OK);
+        rosLogService.update(rosLogA.getId(), ResultState.OK);
 
         RosLog rosLogB= createRosLogWithProduct();
 
-        rosLogService.update(rosLogB, ResultState.NG);
+        rosLogService.update(rosLogB.getId(), ResultState.NG);
 
         RosLog rosLogC = createRosLogWithProduct();
 
-        rosLogService.update(rosLogC, ResultState.NG);
+        rosLogService.update(rosLogC.getId(), ResultState.NG);
 
         List<RosLog> list = rosLogService.findByState(ResultState.NG);
 
@@ -62,6 +63,10 @@ class RosLogServiceTest {
     }
 
     private RosLog createRosLogWithProduct() {
-        return rosLogService.createRosLog(productService.createProduct());
+
+        Product product = productService.createProduct();
+        Long productId = product.getId();
+
+        return rosLogService.createRosLog(productId);
     }
 }

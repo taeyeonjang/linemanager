@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,6 +18,10 @@ public class ProcessLogRepository {
     //저장
     public void save(ProcessLog processLog) {
         em.persist(processLog);
+    }
+
+    public Optional<ProcessLog> findById(Long id) {
+        return Optional.ofNullable(em.find(ProcessLog.class, id));
     }
 
     //시리얼넘버 조회

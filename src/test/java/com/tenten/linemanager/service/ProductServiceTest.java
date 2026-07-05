@@ -58,7 +58,7 @@ class ProductServiceTest {
 
         //when
 
-        productService.updateFinalResult(productA, ResultState.NG);
+        productService.updateFinalResult(productA.getId(), ResultState.NG);
 
         //then
 

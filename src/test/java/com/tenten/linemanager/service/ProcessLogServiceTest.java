@@ -28,7 +28,8 @@ class ProcessLogServiceTest {
     @Test
     public void 생성() {
         //given
-        ProcessLog processLogA = processLogService.createProcessLog(productService.createProduct(), 1);
+        Product product = productService.createProduct();
+        ProcessLog processLogA = processLogService.createProcessLog(product.getId(), 1);
 
         //when
         String serialNumber = processLogA.getProduct().getSerialNumber();
@@ -40,9 +41,11 @@ class ProcessLogServiceTest {
     @Test
     public void 완료시간() {
 
-        ProcessLog processLogA = processLogService.createProcessLog(productService.createProduct(), 1);
+        Product product = productService.createProduct();
 
-        processLogService.updateProcessResult(processLogA, ResultState.OK);
+        ProcessLog processLogA = processLogService.createProcessLog(product.getId(), 1);
+
+        processLogService.updateProcessResult(processLogA.getId(), ResultState.OK);
 
         Assertions.assertThat(processLogA.getCompletedAt()).isNotNull();
         Assertions.assertThat(processLogA.getResult()).isEqualTo(ResultState.OK);
@@ -50,17 +53,25 @@ class ProcessLogServiceTest {
 
     @Test
     public void 공정_결과_조회() {
-        ProcessLog processLogA = processLogService.createProcessLog(productService.createProduct(), 1);
-        processLogService.createProcessLog(processLogA.getProduct(), 2);
-        processLogService.createProcessLog(processLogA.getProduct(), 3);
-        processLogService.createProcessLog(processLogA.getProduct(), 4);
 
-        ProcessLog processLogB = processLogService.createProcessLog(productService.createProduct(), 1);
-        ProcessLog processLogC = processLogService.createProcessLog(productService.createProduct(), 1);
+        Product productA = productService.createProduct();
 
-        processLogService.updateProcessResult(processLogA, ResultState.NG);
-        processLogService.updateProcessResult(processLogB, ResultState.NG);
-        processLogService.updateProcessResult(processLogC, ResultState.NG);
+        Long productId = productA.getId();
+
+        ProcessLog processLogA = processLogService.createProcessLog(productId, 1);
+        processLogService.createProcessLog(productId, 2);
+        processLogService.createProcessLog(productId, 3);
+        processLogService.createProcessLog(productId, 4);
+
+        Product productB = productService.createProduct();
+        Product productC = productService.createProduct();
+
+        ProcessLog processLogB = processLogService.createProcessLog(productB.getId(), 1);
+        ProcessLog processLogC = processLogService.createProcessLog(productC.getId(), 1);
+
+        processLogService.updateProcessResult(processLogA.getId(), ResultState.NG);
+        processLogService.updateProcessResult(processLogB.getId(), ResultState.NG);
+        processLogService.updateProcessResult(processLogC.getId(), ResultState.NG);
 
         List<ProcessLog> list = processLogService.findProcess(1, ResultState.NG);
 

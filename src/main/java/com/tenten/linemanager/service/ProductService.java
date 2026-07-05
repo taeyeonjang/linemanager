@@ -44,8 +44,19 @@ public class ProductService {
                 .toUpperCase();
     }
 
-    public void updateFinalResult(Product product, ResultState result) {
-        product.update(result);
+    public void updateCurrentProcessNo(Long productId, int processNo) {
+        Product product = productRepository.findById(productId).orElseThrow();
+        product.updateCurrentProcessNo(processNo);
+    }
+
+    public void updateLineStatus(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalStateException("없는 Product 입니다, productId =" + productId));
+        product.updateLineStatus();
+    }
+
+    public void updateFinalResult(Long productId, ResultState result) {
+        Product product = productRepository.findById(productId).orElseThrow();
+        product.updateFinal(result);
     }
 
 

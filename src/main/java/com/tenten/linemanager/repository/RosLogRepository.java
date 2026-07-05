@@ -20,6 +20,9 @@ public class RosLogRepository {
         em.persist(rosLog);
     }
 
+    public Optional<RosLog> findById(Long id) {
+        return Optional.ofNullable(em.find(RosLog.class, id));
+    }
 
     //시리얼넘버로 조회
     public Optional<RosLog> findByProductSerialNumber(String serialNumber) {

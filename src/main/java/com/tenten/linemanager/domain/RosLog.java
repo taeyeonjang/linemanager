@@ -18,9 +18,6 @@ public class RosLog {
     @Enumerated(EnumType.STRING)
     private ResultState operatorDecision;
 
-    @Enumerated(EnumType.STRING)
-    private ResultState rosState;
-
     private LocalDateTime decidedAt;
     private LocalDateTime completedAt;
 
@@ -28,7 +25,6 @@ public class RosLog {
         RosLog rosLog = new RosLog();
         rosLog.product = product;
         rosLog.operatorDecision = ResultState.INIT;
-        rosLog.rosState = ResultState.INIT;
         rosLog.decidedAt = LocalDateTime.now();
 
         return rosLog;

@@ -5,6 +5,7 @@ import com.tenten.linemanager.domain.Product;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,57 +15,69 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class LineSimulationService {
 
     private final ProcessLogService processLogService;
     private final ProductService productService;
     private final RosLogService rosLogService;
 
-    private final Queue<Product> watingQueue = new LinkedList<>();
+    private final Queue<Product> waitingQueue = new LinkedList<>();
 
     public void prepareProduct() {
         Product product = productService.createProduct();
-        watingQueue.add(product);
+        waitingQueue.add(product);
     }
 
+    @Async
     public void startLine() {
-        if (watingQueue.isEmpty()) return;
-        Product product = watingQueue.poll();
-        processStep(product, 1);
+        if (waitingQueue.isEmpty()) return;
+        Product product = waitingQueue.poll();
+        //상태를 러닝으로
+        Long productId = product.getId();
+        productService.updateLineStatus(productId);
+        processStep(productId, 1);
     }
 
-    public void processStep(Product product, int processNo) {
+    public void processStep(Long productId, int processNo) {
+
+        productService.updateCurrentProcessNo(productId, processNo);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return;
+        }
         //ProcessLog 생성
-        ProcessLog processLog = processLogService.createProcessLog(product, processNo);
+        ProcessLog processLog = processLogService.createProcessLog(productId, processNo);
 
         //결과 판정
         ResultState result = randomResult();
 
         //ProcessLog update
-        processLogService.updateProcessResult(processLog, result);
+        processLogService.updateProcessResult(processLog.getId(), result);
 
         //ROS 확인
         if (processNo == 3 && result == ResultState.NG) {
-            rosLogService.createRosLog(product);
+            rosLogService.createRosLog(productId);
             return;
         }
 
         //다음 공정 호출 (재귀)
         if (result == ResultState.OK && processNo < 5) {
-            processStep(product, processNo + 1);
+            processStep(productId, processNo + 1);
         } else {
-            productService.updateFinalResult(product, result);
+            productService.updateFinalResult(productId, result);
         }
     }
 
-    public void rosPopup(RosLog rosLog, ResultState operatorDecision) {
-        rosLogService.update(rosLog, operatorDecision);
+    @Async
+    public void rosPopup(Long rosLogId, ResultState operatorDecision) {
+        RosLog rosLog = rosLogService.update(rosLogId, operatorDecision);
 
         if (operatorDecision == ResultState.OK) {
-            processStep(rosLog.getProduct(), 4);
+            processStep(rosLog.getProduct().getId(), 4);
         } else {
-            productService.updateFinalResult(rosLog.getProduct(), operatorDecision);
+            productService.updateFinalResult(rosLog.getProduct().getId(), operatorDecision);
         }
     }
 
