@@ -1,5 +1,6 @@
 package com.tenten.linemanager.service;
 
+import com.tenten.linemanager.domain.LineStatus;
 import com.tenten.linemanager.domain.Product;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.repository.ProductRepository;
@@ -61,6 +62,7 @@ public class ProductService {
 
 
 
+
     @Transactional(readOnly = true)
     public Optional<Product> findOne(String serialNumber) {
         return productRepository.findBySerialNumber(serialNumber);
@@ -69,6 +71,11 @@ public class ProductService {
     @Transactional(readOnly = true)
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> findByState(LineStatus status) {
+        return productRepository.findByStatus(status);
     }
 
 //    public void init() {

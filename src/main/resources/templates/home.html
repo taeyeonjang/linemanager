@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LineManager</title>
+</head>
+<body>
+<h1>LineManager</h1>
+
+<form th:action="@{/prepare}" method="post">
+    <button type="submit">제품 준비</button>
+</form>
+
+<form th:action="@{/start}" method="post">
+    <button type="submit">라인 시작</button>
+</form>
+
+<h2>대기 중</h2>
+<ul>
+    <li th:each="product : ${waitingProducts}">
+        <span th:text="${product.serialNumber}"></span>
+    </li>
+</ul>
+
+<h2>진행 중</h2>
+<ul>
+    <li th:each="product : ${runningStatus}">
+        <span th:text="${product.serialNumber}"></span>
+        - 현재 공정: <span th:text="${product.currentProcessNo}"></span>
+        <span th:text="'Result = ' + ${product.lastResult}"></span>
+    </li>
+</ul>
+
+
+<script>
+    setTimeout(function() { location.reload(); }, 3000);
+</script>
+
+</body>
+</html>

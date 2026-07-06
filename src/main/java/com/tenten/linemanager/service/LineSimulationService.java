@@ -86,7 +86,7 @@ public class LineSimulationService {
 
         int n = random.nextInt(10);
 
-        if(n < 8) {
+        if(n < 9) {
             return ResultState.OK;
         } else {
             return ResultState.NG;
