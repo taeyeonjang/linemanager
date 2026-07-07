@@ -28,7 +28,6 @@ public class Product {
 
     private int currentProcessNo;
 
-
     public static Product create(String serialNumber) {
         Product product = new Product();
         product.serialNumber = serialNumber;

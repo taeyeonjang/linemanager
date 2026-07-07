@@ -5,6 +5,7 @@ import com.tenten.linemanager.domain.Product;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
-
 @Service
 @RequiredArgsConstructor
 public class LineSimulationService {
@@ -32,8 +32,8 @@ public class LineSimulationService {
     public void startLine() {
         if (waitingQueue.isEmpty()) return;
         Product product = waitingQueue.poll();
-        //상태를 러닝으로
         Long productId = product.getId();
+        //상태를 러닝으로
         productService.updateLineStatus(productId);
         processStep(productId, 1);
     }
@@ -53,8 +53,9 @@ public class LineSimulationService {
         //결과 판정
         ResultState result = randomResult();
 
-        //ProcessLog update
+        //ProcessLog, ProductCurrentResult update
         processLogService.updateProcessResult(processLog.getId(), result);
+
 
         //ROS 확인
         if (processNo == 3 && result == ResultState.NG) {
@@ -70,6 +71,14 @@ public class LineSimulationService {
         }
     }
 
+    //ROS 수동 NG 전용 메서드
+    public void rosNgProcess(Long productId) {
+        productService.updateCurrentProcessNo(productId, 4);
+        ProcessLog processLog = processLogService.createProcessLog(productId, 4);
+        processLogService.updateProcessResult(processLog.getId(), ResultState.NG);
+        productService.updateFinalResult(productId, ResultState.NG);
+    }
+
     @Async
     public void rosPopup(Long rosLogId, ResultState operatorDecision) {
         RosLog rosLog = rosLogService.update(rosLogId, operatorDecision);
@@ -77,7 +86,7 @@ public class LineSimulationService {
         if (operatorDecision == ResultState.OK) {
             processStep(rosLog.getProduct().getId(), 4);
         } else {
-            productService.updateFinalResult(rosLog.getProduct().getId(), operatorDecision);
+            rosNgProcess(rosLog.getProduct().getId());
         }
     }
 
