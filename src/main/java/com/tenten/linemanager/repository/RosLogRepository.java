@@ -40,4 +40,9 @@ public class RosLogRepository {
                 .getResultList();
     }
 
+    public List<RosLog> findAll() {
+        return em.createQuery("select rl from RosLog rl", RosLog.class)
+                .getResultList();
+    }
+
 }

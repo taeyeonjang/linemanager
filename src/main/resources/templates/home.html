@@ -53,6 +53,15 @@
         }
         .empty-msg { color: #bbb; font-size: 14px; }
 
+        /* 2컬럼 레이아웃 */
+        .main-layout {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .left-panel { flex: 1; min-width: 0; }
+        .right-panel { width: 320px; flex-shrink: 0; }
+
         /* 공정 흐름 */
         .product-row {
             margin-bottom: 24px;
@@ -70,8 +79,8 @@
         .process-flow { display: flex; align-items: center; }
 
         .process-box {
-            width: 90px;
-            height: 76px;
+            width: 80px;
+            height: 70px;
             border-radius: 10px;
             display: flex;
             flex-direction: column;
@@ -81,8 +90,8 @@
             font-size: 12px;
             transition: all 0.3s ease;
         }
-        .process-box .label { font-size: 11px; margin-bottom: 6px; opacity: 0.8; }
-        .process-box .icon { font-size: 22px; }
+        .process-box .label { font-size: 10px; margin-bottom: 4px; opacity: 0.8; }
+        .process-box .icon { font-size: 18px; }
 
         .process-box.pending {
             background: #fafafa;
@@ -112,24 +121,24 @@
             100% { box-shadow: 0 0 0 0 rgba(255, 167, 38, 0); }
         }
 
-        .arrow { color: #ccc; font-size: 18px; padding: 0 6px; }
+        .arrow { color: #ccc; font-size: 16px; padding: 0 4px; }
 
         .station {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .ng-output {
-            width: 76px;
-            height: 36px;
+            width: 68px;
+            height: 30px;
             border: 2px dashed #e0e0e0;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 9px;
             color: #ccc;
             font-weight: bold;
         }
@@ -140,31 +149,46 @@
             box-shadow: 0 0 8px rgba(239, 83, 80, 0.5);
         }
         .ros-output {
-            width: 76px;
-            height: 36px;
+            width: 68px;
+            height: 30px;
             border: 2px dashed #ffa726;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 9px;
             color: #ffa726;
             font-weight: bold;
         }
+
+        .ros-output.ok {
+            border: 2px solid #66bb6a;
+            background: #66bb6a;
+            color: white;
+            box-shadow: 0 0 8px rgba(102, 187, 106, 0.5);
+        }
+
+        .ros-output.ng {
+            border: 2px solid #ef5350;
+            background: #ef5350;
+            color: white;
+            box-shadow: 0 0 8px rgba(239, 83, 80, 0.5);
+        }
         .done-box {
-            width: 70px;
-            height: 76px;
+            width: 60px;
+            height: 70px;
             background: #fafafa;        /* 흰색으로 변경 */
             border: 2px solid #e0e0e0;  /* 회색으로 변경 */
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             color: #bbb;                /* 회색으로 변경 */
-            margin-left: 8px;
+            margin-left: 6px;
         }
+
         .done-box.ok {
             background: #e8f5e9;
             border: 2px solid #66bb6a;
@@ -175,6 +199,7 @@
             border: 2px solid #ef5350;
             color: #c62828;
         }
+
 
         /* ROS */
         .ros-card {
@@ -200,13 +225,69 @@
         .ros-btn:hover { opacity: 0.85; }
         .ros-ok { background: #4CAF50; color: white; }
         .ros-ng { background: #f44336; color: white; }
+
+        /* 통계 카드 */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .stat-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .stat-item .stat-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+        .stat-item .stat-value { font-size: 22px; font-weight: bold; color: #333; }
+        .stat-item.ok-stat .stat-value { color: #2e7d32; }
+        .stat-item.ng-stat .stat-value { color: #c62828; }
+        .stat-item.rate-stat .stat-value { color: #e65100; }
+        .stat-total {
+            background: #1a1a2e;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .stat-total .label { font-size: 12px; color: #aaa; }
+        .stat-total .value { font-size: 20px; font-weight: bold; }
+
+        /* 최근 완료 목록 */
+        .recent-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .recent-table th {
+            text-align: left;
+            padding: 6px 8px;
+            color: #888;
+            font-size: 11px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .recent-table td {
+            padding: 7px 8px;
+            border-bottom: 1px solid #f8f8f8;
+            color: #333;
+        }
+        .recent-table tr:last-child td { border-bottom: none; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .badge-ok { background: #e8f5e9; color: #2e7d32; }
+        .badge-ng { background: #ffebee; color: #c62828; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>LineManager</h1>
-    <p>스마트팩토리 비전 검사 라인 시뮬레이션</p>
+    <p>라인 시뮬레이션</p>
 </div>
 
 <div class="btn-group">
@@ -242,86 +323,149 @@
     <p class="empty-msg" th:if="${#lists.isEmpty(waitingProducts)}">대기 중인 제품 없음</p>
 </div>
 
-<!-- 진행 중 -->
-<div class="card">
-    <h2>진행 중</h2>
-    <p class="empty-msg" th:if="${#lists.isEmpty(runningStatus) and #lists.isEmpty(doneStatus)}">진행 중인 제품 없음</p>
+<!-- 2컬럼: 진행 중 + 우측 패널 -->
+<div class="main-layout">
 
-    <div th:each="dto : ${runningStatus}" class="product-row">
-        <div class="product-serial">S/N: <span th:text="${dto.serialNumber}"></span></div>
-        <div class="process-flow">
-            <div th:each="i : ${#numbers.sequence(1, 5)}"
-                 th:with="result=${dto.getResultForProcess(i)}"
-                 style="display: flex; align-items: center;">
+    <!-- 왼쪽: 공정 흐름 -->
+    <div class="left-panel">
+        <div class="card">
+            <h2>진행 중</h2>
+            <p class="empty-msg" th:if="${#lists.isEmpty(runningStatus) and #lists.isEmpty(doneStatus)}">진행 중인 제품 없음</p>
 
-                <div class="station">
-                    <div th:class="${i < dto.currentProcessNo} ?
-                                    (${result != null and result.name() == 'OK'} ? 'process-box ok' : 'process-box ng') :
-                                    (${i == dto.currentProcessNo} ? 'process-box current' : 'process-box pending')"
-                         class="process-box">
-                        <span class="label" th:text="${i} + '번 공정'"></span>
-                        <span class="icon"
-                              th:text="${i < dto.currentProcessNo} ?
-                                        (${result != null and result.name() == 'OK'} ? 'OK' : 'NG') :
-                                        (${i == dto.currentProcessNo} ? '...' : '-')"></span>
+            <div th:each="dto : ${runningStatus}" class="product-row">
+                <div class="product-serial">S/N: <span th:text="${dto.serialNumber}"></span></div>
+                <div class="process-flow">
+                    <div th:each="i : ${#numbers.sequence(1, 5)}"
+                         th:with="result=${dto.getResultForProcess(i)}"
+                         style="display: flex; align-items: center;">
+
+                        <div class="station">
+                            <div th:class="${i < dto.currentProcessNo} ?
+                                            (${result != null and result.name() == 'OK'} ? 'process-box ok' : 'process-box ng') :
+                                            (${i == dto.currentProcessNo} ? 'process-box current' : 'process-box pending')"
+                                 class="process-box">
+                                <span class="label" th:text="${i} + '번 공정'"></span>
+                                <span class="icon"
+                                      th:text="${i < dto.currentProcessNo} ?
+                                                (${result != null and result.name() == 'OK'} ? 'OK' : 'NG') :
+                                                (${i == dto.currentProcessNo} ? '...' : '-')"></span>
+                            </div>
+
+                            <div th:if="${i == 3}"
+                                 th:class="${dto.rosDecision != null and dto.rosDecision.name() == 'OK'} ? 'ros-output ok' :
+                                          (${dto.rosDecision != null and dto.rosDecision.name() == 'NG'} ? 'ros-output ng' : 'ros-output')">ROS</div>
+                            <div th:if="${i != 3}"
+                                 th:class="${result != null and result.name() == 'NG'} ? 'ng-output active' : 'ng-output'">
+                                NG 배출
+                            </div>
+                        </div>
+
+                        <span class="arrow" th:if="${i < 5}">→</span>
                     </div>
 
-                    <!-- 3번 공정은 ROS, 나머지는 NG 배출구 -->
-                    <div th:if="${i == 3}" class="ros-output">ROS</div>
-                    <div th:if="${i != 3}"
-                         th:class="${result != null and result.name() == 'NG'} ? 'ng-output active' : 'ng-output'">
-                        NG 배출
-                    </div>
+                    <span class="arrow">→</span>
+                    <div class="done-box">완료</div>
                 </div>
-
-                <span class="arrow" th:if="${i < 5}">→</span>
             </div>
 
-            <span class="arrow">→</span>
-            <div class="done-box">완료</div>
+            <!-- 완료된 제품 (10초간 표시) — doneStatus: <= 사용 (모든 공정 결과 존재) -->
+            <div th:each="dto : ${doneStatus}" class="product-row" style="opacity: 0.6;">
+                <div class="product-serial">
+                    S/N: <span th:text="${dto.serialNumber}"></span>
+                    <span style="margin-left:8px; font-size:12px; color:#888;">— 완료</span>
+                </div>
+                <div class="process-flow">
+                    <div th:each="i : ${#numbers.sequence(1, 5)}"
+                         th:with="result=${dto.getResultForProcess(i)}"
+                         style="display: flex; align-items: center;">
+
+                        <div class="station">
+                            <div th:class="${i <= dto.currentProcessNo} ?
+                                            (${result != null and result.name() == 'OK'} ? 'process-box ok' : 'process-box ng') :
+                                            'process-box pending'"
+                                 class="process-box">
+                                <span class="label" th:text="${i} + '번 공정'"></span>
+                                <span class="icon"
+                                      th:text="${i <= dto.currentProcessNo} ?
+                                                (${result != null and result.name() == 'OK'} ? 'OK' : 'NG') :
+                                                '-'"></span>
+                            </div>
+
+                            <div th:if="${i == 3}"
+                                 th:class="${dto.rosDecision != null and dto.rosDecision.name() == 'OK'} ? 'ros-output ok' :
+                                          (${dto.rosDecision != null and dto.rosDecision.name() == 'NG'} ? 'ros-output ng' : 'ros-output')">ROS</div>
+                            <div th:if="${i != 3}"
+                                 th:class="${(result != null and result.name() == 'NG') or (i==4 and dto.rosDecision.name() == 'NG')} ? 'ng-output active' : 'ng-output'">
+                                NG 배출
+                            </div>
+                        </div>
+
+                        <span class="arrow" th:if="${i < 5}">→</span>
+                    </div>
+
+                    <span class="arrow">→</span>
+                    <div th:class="${dto.finalResult.name() == 'OK'} ? 'done-box ok' :
+               (${dto.finalResult.name() == 'NG'} ? 'done-box ng' : 'done-box')">
+                        완료
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- 완료된 제품 (10초간 표시) -->
-    <div th:each="dto : ${doneStatus}" class="product-row" style="opacity: 0.6;">
-        <div class="product-serial">
-            S/N: <span th:text="${dto.serialNumber}"></span>
-            <span style="margin-left:8px; font-size:12px; color:#888;">— 완료</span>
-        </div>
-        <div class="process-flow">
-            <div th:each="i : ${#numbers.sequence(1, 5)}"
-                 th:with="result=${dto.getResultForProcess(i)}"
-                 style="display: flex; align-items: center;">
+    <!-- 오른쪽: 통계 + 최근 완료 목록 -->
+    <div class="right-panel">
 
-                <div class="station">
-                    <div th:class="${i < dto.currentProcessNo} ?
-                                    (${result != null and result.name() == 'OK'} ? 'process-box ok' : 'process-box ng') :
-                                    (${i == dto.currentProcessNo} ? 'process-box current' : 'process-box pending')"
-                         class="process-box">
-                        <span class="label" th:text="${i} + '번 공정'"></span>
-                        <span class="icon"
-                              th:text="${i < dto.currentProcessNo} ?
-                                        (${result != null and result.name() == 'OK'} ? 'OK' : 'NG') :
-                                        (${i == dto.currentProcessNo} ? '...' : '-')"></span>
-                    </div>
-
-                    <!-- 3번 공정은 ROS, 나머지는 NG 배출구 -->
-                    <div th:if="${i == 3}" class="ros-output">ROS</div>
-                    <div th:if="${i != 3}"
-                         th:class="${result != null and result.name() == 'NG'} ? 'ng-output active' : 'ng-output'">
-                        NG 배출
-                    </div>
+        <!-- 생산 현황 통계 -->
+        <div class="card">
+            <h2>생산 현황</h2>
+            <div class="stat-total">
+                <span class="label">총 생산</span>
+                <span class="value" th:text="${totalDone} + '개'">0개</span>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-item ok-stat">
+                    <div class="stat-label">OK</div>
+                    <div class="stat-value" th:text="${okCount}">0</div>
                 </div>
-
-                <span class="arrow" th:if="${i < 5}">→</span>
+                <div class="stat-item ng-stat">
+                    <div class="stat-label">NG</div>
+                    <div class="stat-value" th:text="${ngCount}">0</div>
+                </div>
             </div>
-
-            <span class="arrow">→</span>
-            <div th:class="${dto.finalResult.name() == 'OK'} ? 'done-box ok' :
-               (${dto.finalResult.name() == 'NG'} ? 'done-box ng' : 'done-box')">
-                완료
+            <div class="stat-item rate-stat" style="text-align:center; padding: 10px;">
+                <div class="stat-label">불량률</div>
+                <div class="stat-value" th:text="${defectRate} + '%'">0.0%</div>
             </div>
         </div>
+
+        <!-- 최근 완료 목록 (최대 10개) -->
+        <div class="card">
+            <h2>최근 완료</h2>
+            <p class="empty-msg" th:if="${#lists.isEmpty(recentDoneList)}">완료된 제품 없음</p>
+            <table class="recent-table" th:if="${not #lists.isEmpty(recentDoneList)}">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>최종공정</th>
+                        <th>결과</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="product : ${recentDoneList}">
+                        <td th:text="${product.serialNumber}"></td>
+                        <td th:text="${product.currentProcessNo} + '번'"></td>
+                        <td>
+                            <span th:if="${product.finalResult != null and product.finalResult.name() == 'OK'}"
+                                  class="badge badge-ok">OK</span>
+                            <span th:if="${product.finalResult != null and product.finalResult.name() == 'NG'}"
+                                  class="badge badge-ng">NG</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
 

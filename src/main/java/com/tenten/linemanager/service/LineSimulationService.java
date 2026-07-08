@@ -41,6 +41,7 @@ public class LineSimulationService {
     public void processStep(Long productId, int processNo) {
 
         productService.updateCurrentProcessNo(productId, processNo);
+
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -52,6 +53,8 @@ public class LineSimulationService {
 
         //결과 판정
         ResultState result = randomResult();
+
+        if(processNo == 3 ) result = ResultState.NG;
 
         //ProcessLog, ProductCurrentResult update
         processLogService.updateProcessResult(processLog.getId(), result);
@@ -73,9 +76,6 @@ public class LineSimulationService {
 
     //ROS 수동 NG 전용 메서드
     public void rosNgProcess(Long productId) {
-        productService.updateCurrentProcessNo(productId, 4);
-        ProcessLog processLog = processLogService.createProcessLog(productId, 4);
-        processLogService.updateProcessResult(processLog.getId(), ResultState.NG);
         productService.updateFinalResult(productId, ResultState.NG);
     }
 

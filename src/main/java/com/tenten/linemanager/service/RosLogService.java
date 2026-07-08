@@ -50,4 +50,8 @@ public class RosLogService {
     public List<RosLog> findByState(ResultState state) {
         return rosLogRepository.findOperatorDecision(state);
     }
+
+    public List<RosLog> findAll() {
+        return rosLogRepository.findAll();
+    }
 }

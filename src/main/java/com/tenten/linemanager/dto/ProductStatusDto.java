@@ -4,6 +4,7 @@ import com.tenten.linemanager.domain.ProcessLog;
 import com.tenten.linemanager.domain.ResultState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -13,8 +14,10 @@ public class ProductStatusDto {
 
     private String serialNumber;
     private int currentProcessNo;
-    private List<ProcessLog> logs;
     private ResultState finalResult;
+    private List<ProcessLog> logs;
+    @Setter
+    public ResultState rosDecision;
 
     public ResultState getResultForProcess(int processNo) {
         return logs.stream()

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -30,33 +31,60 @@ public class LineServiceController {
     public String home(Model model) {
         List<Product> waitingProducts = productService.findByState(LineStatus.WAITING);
         List<Product> runningProducts = productService.findByState(LineStatus.RUNNING);
+        List<Product> doneProducts = productService.findByState(LineStatus.DONE);
         List<RosLog> pendingRos = rosLogService.findByState(ResultState.INIT);
+        List<RosLog> allRos = rosLogService.findAll();
+
+        long totalDone = doneProducts.size();
+        long okCount = doneProducts.stream().filter(p -> p.getFinalResult() == ResultState.OK).count();
+        long ngCount = doneProducts.stream().filter(p -> p.getFinalResult() == ResultState.NG).count();
+        String defectRate = totalDone == 0 ? "0.0"
+                : String.format("%.1f", (ngCount * 100.0 / totalDone));
 
         List<ProductStatusDto> runningStatus = new ArrayList<>(); //메인하면 공정 흐름 나타내기 위한 리스트
-        List<ProductStatusDto> doneStatus = new ArrayList<>(); //제품이 완료되는 시점에 공정흐름이 바로 끝나기때문에 추가한 완료 리스트
-
+        List<ProductStatusDto> doneStatus = new ArrayList<>(); //완료제품 리스트
+        List<ProductStatusDto> allStatus = new ArrayList<>();
 
         for (Product product : runningProducts) {
             List<ProcessLog> logs = processLogService.findOne(product.getSerialNumber());
-            runningStatus.add(new ProductStatusDto(product.getSerialNumber(), product.getCurrentProcessNo(), logs, product.getFinalResult()));
+            runningStatus.add(new ProductStatusDto(product.getSerialNumber(), product.getCurrentProcessNo(), product.getFinalResult(), logs, ResultState.INIT));
         }
 
 
-        List<Product> recentDone = productService.findAll().stream()
-                        .filter(p -> p.getStatus() == LineStatus.DONE)
-                        .filter(p -> p.getCompletedAt().isAfter(LocalDateTime.now().minusSeconds(10)))
+        List<Product> recentDone = doneProducts.stream()
+                        .filter(p -> p.getCompletedAt() != null && p.getCompletedAt().isAfter(LocalDateTime.now().minusSeconds(5)))
+                        .toList();
+
+        List<Product> recentDoneList = doneProducts.stream()
+                        .filter(p -> p.getCompletedAt() != null)
+                        .sorted(Comparator.comparing(Product::getCompletedAt).reversed())
+                        .limit(10)
                         .toList();
 
         for (Product product : recentDone) {
             List<ProcessLog> logs = processLogService.findOne(product.getSerialNumber());
-            doneStatus.add(new ProductStatusDto(product.getSerialNumber(), product.getCurrentProcessNo(), logs, product.getFinalResult()));
+            doneStatus.add(new ProductStatusDto(product.getSerialNumber(), product.getCurrentProcessNo(), product.getFinalResult(), logs, ResultState.INIT));
         }
 
+        allStatus.addAll(runningStatus);
+        allStatus.addAll(doneStatus);
+
+        for (ProductStatusDto dto : allStatus) {
+            allRos.stream()
+                    .filter(r -> r.getProduct().getSerialNumber().equals(dto.getSerialNumber()))
+                    .findFirst()
+                    .ifPresent(r -> dto.setRosDecision(r.getOperatorDecision()));
+        }
 
         model.addAttribute("waitingProducts", waitingProducts);
         model.addAttribute("runningStatus", runningStatus);
         model.addAttribute("pendingRos", pendingRos);
         model.addAttribute("doneStatus", doneStatus);
+        model.addAttribute("totalDone", totalDone);
+        model.addAttribute("okCount", okCount);
+        model.addAttribute("ngCount", ngCount);
+        model.addAttribute("defectRate", defectRate);
+        model.addAttribute("recentDoneList", recentDoneList);
 
         return "home";
     }
@@ -76,7 +104,7 @@ public class LineServiceController {
     }
 
     @PostMapping("/ros")
-    public String ros(@RequestParam Long rosLogId, @RequestParam String decision) throws InterruptedException {
+    public String ros(@RequestParam Long rosLogId, @RequestParam String decision) {
         ResultState result = ResultState.valueOf(decision);
         lineSimulationService.rosPopup(rosLogId, result);
         return "redirect:/";
