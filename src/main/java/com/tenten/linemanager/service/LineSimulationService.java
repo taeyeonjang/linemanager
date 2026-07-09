@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -53,8 +52,6 @@ public class LineSimulationService {
 
         //결과 판정
         ResultState result = randomResult();
-
-        if(processNo == 3 ) result = ResultState.NG;
 
         //ProcessLog, ProductCurrentResult update
         processLogService.updateProcessResult(processLog.getId(), result);

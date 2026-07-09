@@ -13,11 +13,31 @@
             padding: 20px 28px;
             border-radius: 12px;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .header h1 { font-size: 26px; letter-spacing: 1px; }
         .header p { font-size: 13px; color: #aaa; margin-top: 4px; }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link {
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .nav-link:hover { background: rgba(255,255,255,0.2); }
 
-        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: space-between;
+        }
         .btn {
             padding: 10px 24px;
             border: none;
@@ -27,6 +47,7 @@
             font-weight: bold;
             transition: opacity 0.2s;
         }
+        .btn-history { background: #616161; color: white; text-decoration: none; display: inline-flex; align-items: center; }
         .btn:hover { opacity: 0.85; }
         .btn-prepare { background: #4CAF50; color: white; }
         .btn-start { background: #2196F3; color: white; }
@@ -160,14 +181,12 @@
             color: #ffa726;
             font-weight: bold;
         }
-
         .ros-output.ok {
             border: 2px solid #66bb6a;
             background: #66bb6a;
             color: white;
             box-shadow: 0 0 8px rgba(102, 187, 106, 0.5);
         }
-
         .ros-output.ng {
             border: 2px solid #ef5350;
             background: #ef5350;
@@ -177,18 +196,17 @@
         .done-box {
             width: 60px;
             height: 70px;
-            background: #fafafa;        /* 흰색으로 변경 */
-            border: 2px solid #e0e0e0;  /* 회색으로 변경 */
+            background: #fafafa;
+            border: 2px solid #e0e0e0;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
             font-weight: bold;
-            color: #bbb;                /* 회색으로 변경 */
+            color: #bbb;
             margin-left: 6px;
         }
-
         .done-box.ok {
             background: #e8f5e9;
             border: 2px solid #66bb6a;
@@ -199,7 +217,6 @@
             border: 2px solid #ef5350;
             color: #c62828;
         }
-
 
         /* ROS */
         .ros-card {
@@ -286,17 +303,26 @@
 <body>
 
 <div class="header">
-    <h1>LineManager</h1>
-    <p>라인 시뮬레이션</p>
+    <div>
+        <h1>LineManager</h1>
+        <p>라인 시뮬레이션</p>
+    </div>
 </div>
 
 <div class="btn-group">
-    <form th:action="@{/prepare}" method="post">
-        <button type="submit" class="btn btn-prepare">제품 준비</button>
-    </form>
-    <form th:action="@{/start}" method="post">
-        <button type="submit" class="btn btn-start">라인 시작</button>
-    </form>
+    <div style="display:flex; gap:10px;">
+        <form th:action="@{/prepare}" method="post">
+            <button type="submit" class="btn btn-prepare">제품 준비</button>
+        </form>
+        <form th:action="@{/start}" method="post">
+            <button type="submit" class="btn btn-start">라인 시작</button>
+        </form>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+        <a href="/history/process" target="_blank" class="btn btn-history">제품 이력</a>
+        <a href="/history/ros" target="_blank" class="btn btn-history">ROS 이력</a>
+    </div>
 </div>
 
 <!-- ROS 판정 -->
@@ -368,7 +394,7 @@
                 </div>
             </div>
 
-            <!-- 완료된 제품 (10초간 표시) — doneStatus: <= 사용 (모든 공정 결과 존재) -->
+            <!-- 완료된 제품 (10초간 표시) -->
             <div th:each="dto : ${doneStatus}" class="product-row" style="opacity: 0.6;">
                 <div class="product-serial">
                     S/N: <span th:text="${dto.serialNumber}"></span>
@@ -395,7 +421,7 @@
                                  th:class="${dto.rosDecision != null and dto.rosDecision.name() == 'OK'} ? 'ros-output ok' :
                                           (${dto.rosDecision != null and dto.rosDecision.name() == 'NG'} ? 'ros-output ng' : 'ros-output')">ROS</div>
                             <div th:if="${i != 3}"
-                                 th:class="${(result != null and result.name() == 'NG') or (i==4 and dto.rosDecision.name() == 'NG')} ? 'ng-output active' : 'ng-output'">
+                                 th:class="${(result != null and result.name() == 'NG') or (i == 4 and dto.rosDecision != null and dto.rosDecision.name() == 'NG')} ? 'ng-output active' : 'ng-output'">
                                 NG 배출
                             </div>
                         </div>
@@ -404,8 +430,8 @@
                     </div>
 
                     <span class="arrow">→</span>
-                    <div th:class="${dto.finalResult.name() == 'OK'} ? 'done-box ok' :
-               (${dto.finalResult.name() == 'NG'} ? 'done-box ng' : 'done-box')">
+                    <div th:class="${dto.finalResult != null and dto.finalResult.name() == 'OK'} ? 'done-box ok' :
+                                  (${dto.finalResult != null and dto.finalResult.name() == 'NG'} ? 'done-box ng' : 'done-box')">
                         완료
                     </div>
                 </div>

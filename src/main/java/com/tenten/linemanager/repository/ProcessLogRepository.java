@@ -24,6 +24,10 @@ public class ProcessLogRepository {
         return Optional.ofNullable(em.find(ProcessLog.class, id));
     }
 
+    public List<ProcessLog> findAll() {
+        return em.createQuery("select pl from ProcessLog pl", ProcessLog.class)
+                .getResultList();
+    }
     //시리얼넘버 조회
     public List<ProcessLog> findByProductSerialNumber(String serialNumber) {
         return em.createQuery("select pl from ProcessLog pl where pl.product.serialNumber = :sn", ProcessLog.class)
@@ -38,4 +42,6 @@ public class ProcessLogRepository {
                 .setParameter("st", state)
                 .getResultList();
     }
+
+
 }

@@ -39,6 +39,11 @@ public class ProcessLogService {
     }
 
     @Transactional(readOnly = true)
+    public List<ProcessLog> findAll() {
+        return processLogRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
     public List<ProcessLog> findOne(String serialNumber) {
         return processLogRepository.findByProductSerialNumber(serialNumber);
     }

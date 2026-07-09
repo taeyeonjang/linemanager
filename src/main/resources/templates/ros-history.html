@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ROS 이력 — LineManager</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 20px 28px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 22px; letter-spacing: 1px; }
+        .header p { font-size: 13px; color: #aaa; margin-top: 4px; }
+        .back-link {
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .back-link:hover { background: rgba(255,255,255,0.2); }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .card h2 { font-size: 16px; color: #555; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* 필터 */
+        .filter-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-group label { font-size: 13px; color: #555; font-weight: bold; }
+        .filter-group select, .filter-group input {
+            padding: 7px 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #333;
+            outline: none;
+        }
+        .filter-group select:focus, .filter-group input:focus { border-color: #ffa726; }
+        .btn-filter {
+            padding: 8px 20px;
+            background: #ffa726;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-filter:hover { opacity: 0.85; }
+        .btn-reset {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            color: #555;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-reset:hover { background: #eee; }
+
+        /* 통계 */
+        .stat-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+        }
+        .stat-box .label { font-size: 11px; color: #888; margin-bottom: 4px; }
+        .stat-box .value { font-size: 24px; font-weight: bold; color: #333; }
+        .stat-box.ok-box .value { color: #2e7d32; }
+        .stat-box.ng-box .value { color: #c62828; }
+
+        /* 테이블 */
+        .history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .history-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #888;
+            font-size: 12px;
+            border-bottom: 2px solid #f0f0f0;
+            background: #fafafa;
+        }
+        .history-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f5f5f5;
+            color: #333;
+        }
+        .history-table tr:hover td { background: #fffdf5; }
+        .history-table tr:last-child td { border-bottom: none; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-ok { background: #e8f5e9; color: #2e7d32; }
+        .badge-ng { background: #ffebee; color: #c62828; }
+        .badge-init { background: #fff8e1; color: #f57f17; }
+
+        .empty-msg { color: #bbb; font-size: 14px; text-align: center; padding: 40px; }
+        .count-info { font-size: 13px; color: #888; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>ROS 이력 조회</h1>
+        <p>작업자 재판정 전체 이력</p>
+    </div>
+    <a href="javascript:window.close()" class="back-link">✕ 닫기</a>
+</div>
+
+<!-- 통계 -->
+<div class="card">
+    <h2>ROS 현황</h2>
+    <div class="stat-row">
+        <div class="stat-box">
+            <div class="label">전체</div>
+            <div class="value" th:text="${#lists.size(allRosLogs)}">0</div>
+        </div>
+        <div class="stat-box ok-box">
+            <div class="label">OK 판정</div>
+            <div class="value" th:text="${rosOkCount}">0</div>
+        </div>
+        <div class="stat-box ng-box">
+            <div class="label">NG 판정</div>
+            <div class="value" th:text="${rosNgCount}">0</div>
+        </div>
+    </div>
+</div>
+
+<!-- 필터 -->
+<div class="card">
+    <h2>필터</h2>
+    <form th:action="@{/history/ros}" method="get" class="filter-group">
+        <label>S/N</label>
+        <input type="text" name="serialNumber" placeholder="시리얼넘버 입력"
+               th:value="${param.serialNumber}">
+
+        <label>판정 결과</label>
+        <select name="result">
+            <option value="">전체</option>
+            <option value="OK" th:selected="${param.result == 'OK'}">OK</option>
+            <option value="NG" th:selected="${param.result == 'NG'}">NG</option>
+        </select>
+
+        <button type="submit" class="btn-filter">조회</button>
+        <a th:href="@{/history/ros}" class="btn-reset">초기화</a>
+    </form>
+</div>
+
+<!-- 결과 테이블 -->
+<div class="card">
+    <h2>ROS 이력</h2>
+    <p class="count-info" th:text="'총 ' + ${#lists.size(rosLogs)} + '건'"></p>
+
+    <p class="empty-msg" th:if="${#lists.isEmpty(rosLogs)}">조회된 이력이 없습니다</p>
+
+    <table class="history-table" th:if="${not #lists.isEmpty(rosLogs)}">
+        <thead>
+            <tr>
+                <th>S/N</th>
+                <th>판정 결과</th>
+                <th>발생 시각</th>
+                <th>판정 시각</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="log : ${rosLogs}">
+                <td th:text="${log.product.serialNumber}"></td>
+                <td>
+                    <span th:if="${log.operatorDecision != null and log.operatorDecision.name() == 'OK'}" class="badge badge-ok">OK</span>
+                    <span th:if="${log.operatorDecision != null and log.operatorDecision.name() == 'NG'}" class="badge badge-ng">NG</span>
+                    <span th:if="${log.operatorDecision == null or log.operatorDecision.name() == 'INIT'}" class="badge badge-init">대기중</span>
+                </td>
+                <td th:text="${#temporals.format(log.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                <td th:text="${log.completedAt != null} ? ${#temporals.format(log.completedAt, 'yyyy-MM-dd HH:mm:ss')} : '-'"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
