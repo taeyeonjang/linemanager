@@ -3,9 +3,16 @@ package com.tenten.linemanager.repository;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
+import javax.xml.transform.Result;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +50,28 @@ public class RosLogRepository {
     public List<RosLog> findAll() {
         return em.createQuery("select rl from RosLog rl", RosLog.class)
                 .getResultList();
+    }
+
+    public List<RosLog> findByCriteria(String serialNumber, ResultState result) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<RosLog> cq = cb.createQuery(RosLog.class);
+        Root<RosLog> rl = cq.from(RosLog.class);
+
+        List<Predicate> criteria = new ArrayList<>();
+
+        if (StringUtils.hasText(serialNumber)) {
+            Predicate serialNum = cb.equal(rl.get("product").get("serialNumber"), serialNumber);
+            criteria.add(serialNum);
+        }
+
+        if (result != null) {
+            Predicate rs = cb.equal(rl.get("operatorDecision"), result);
+            criteria.add(rs);
+        }
+
+        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
+
+        return em.createQuery(cq).getResultList();
     }
 
 }

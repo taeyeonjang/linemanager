@@ -54,4 +54,8 @@ public class RosLogService {
     public List<RosLog> findAll() {
         return rosLogRepository.findAll();
     }
+
+    public List<RosLog> findByCriteria(String serialNumber, ResultState result) {
+        return rosLogRepository.findByCriteria(serialNumber, result);
+    }
 }

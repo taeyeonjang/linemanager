@@ -39,6 +39,11 @@ public class ProcessLogService {
     }
 
     @Transactional(readOnly = true)
+    public List<ProcessLog> findByCriteria(String serialNuber, Integer processNo, ResultState result) {
+        return processLogRepository.findByCriteria(serialNuber, processNo, result);
+    }
+
+    @Transactional(readOnly = true)
     public List<ProcessLog> findAll() {
         return processLogRepository.findAll();
     }

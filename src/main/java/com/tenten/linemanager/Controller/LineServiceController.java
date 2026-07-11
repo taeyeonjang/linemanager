@@ -91,16 +91,6 @@ public class LineServiceController {
 
 
 
-    @GetMapping("/history/ros")
-    public String historyRos(Model model) {
-        List<RosLog> allRosLogs = rosLogService.findAll();
-        List<RosLog> rosLogs = rosLogService.findAll();
-        model.addAttribute("allRosLogs", allRosLogs);
-        model.addAttribute("rosLogs", rosLogs);
-        return "ros-history";
-    }
-
-
     @PostMapping("/prepare")
     public String prepare() {
         lineSimulationService.prepareProduct();

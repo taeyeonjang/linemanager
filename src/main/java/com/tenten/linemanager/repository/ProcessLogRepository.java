@@ -3,9 +3,15 @@ package com.tenten.linemanager.repository;
 import com.tenten.linemanager.domain.ProcessLog;
 import com.tenten.linemanager.domain.ResultState;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +47,33 @@ public class ProcessLogRepository {
                 .setParameter("no", processNo)
                 .setParameter("st", state)
                 .getResultList();
+    }
+
+    public List<ProcessLog> findByCriteria(String serialNumber, Integer processNo, ResultState result) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ProcessLog> cq = cb.createQuery(ProcessLog.class);
+        Root<ProcessLog> pl = cq.from(ProcessLog.class);
+
+        List<Predicate> criteria = new ArrayList<>();
+
+        if (StringUtils.hasText(serialNumber)) {
+           Predicate serial = cb.equal(pl.get("product").get("serialNumber"), serialNumber);
+           criteria.add(serial);
+        }
+
+        if (processNo != null) {
+           Predicate pNo = cb.equal(pl.get("processNo"), processNo);
+            criteria.add(pNo);
+        }
+
+        if (result != null) {
+           Predicate pResult = cb.equal(pl.get("result"), result);
+           criteria.add(pResult);
+        }
+
+        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
+
+        return em.createQuery(cq).getResultList();
     }
 
 

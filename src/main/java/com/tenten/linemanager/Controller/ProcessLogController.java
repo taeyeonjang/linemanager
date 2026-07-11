@@ -25,14 +25,10 @@ public class ProcessLogController {
         @RequestParam(required = false) ResultState result,
         Model model)
     {
-        List<ProcessLog> processLogs = processLogService.findAll();
-        List<ProcessLog> findBySereialNumber = processLogService.findOne(serialNumber);
-        List<ProcessLog> findByProcessNo = processLogService.findProcess(processNo, result);
-
+        List<ProcessLog> processLogs = processLogService.findByCriteria(serialNumber, processNo, result);
 
         model.addAttribute("processLogs", processLogs);
         return "process-history";
     }
-
 
 }
