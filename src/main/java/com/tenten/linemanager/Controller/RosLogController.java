@@ -2,6 +2,7 @@ package com.tenten.linemanager.Controller;
 
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
+import com.tenten.linemanager.dto.RosStatusDto;
 import com.tenten.linemanager.service.RosLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,23 +26,13 @@ public class RosLogController {
 
         //allRosLogs rosOkCount rosNgCount
 
-        List<RosLog> allRosLogs = rosLogService.findAll();
-        List<RosLog> rosLogs = rosLogService.findByCriteria(serialNumber, result);
+        RosStatusDto rosLogsDto = rosLogService.findAllDto();
+        List<RosLog> criteriaRosLogs = rosLogService.findByCriteria(serialNumber, result);
 
-        long rosOkCount = allRosLogs
-                        .stream()
-                        .filter(p -> p.getOperatorDecision().equals(ResultState.OK))
-                        .count();
 
-        long rosNgCount = allRosLogs
-                .stream()
-                .filter(p -> p.getOperatorDecision().equals(ResultState.NG))
-                .count();
 
-        model.addAttribute("allRosLogs", allRosLogs);
-        model.addAttribute("rosLogs", rosLogs);
-        model.addAttribute("rosOkCount", rosOkCount);
-        model.addAttribute("rosNgCount", rosNgCount);
+        model.addAttribute("rosLogsDto", rosLogsDto);
+        model.addAttribute("criteriaRosLogs", criteriaRosLogs);
 
         return "ros-history";
     }

@@ -447,21 +447,21 @@
             <h2>생산 현황</h2>
             <div class="stat-total">
                 <span class="label">총 생산</span>
-                <span class="value" th:text="${totalDone} + '개'">0개</span>
+                <span class="value" th:text="${homeDto.totalDone} + '개'">0개</span>
             </div>
             <div class="stat-grid">
                 <div class="stat-item ok-stat">
                     <div class="stat-label">OK</div>
-                    <div class="stat-value" th:text="${okCount}">0</div>
+                    <div class="stat-value" th:text="${homeDto.okCount}">0</div>
                 </div>
                 <div class="stat-item ng-stat">
                     <div class="stat-label">NG</div>
-                    <div class="stat-value" th:text="${ngCount}">0</div>
+                    <div class="stat-value" th:text="${homeDto.ngCount}">0</div>
                 </div>
             </div>
             <div class="stat-item rate-stat" style="text-align:center; padding: 10px;">
                 <div class="stat-label">불량률</div>
-                <div class="stat-value" th:text="${defectRate} + '%'">0.0%</div>
+                <div class="stat-value" th:text="${homeDto.defectRate} + '%'">0.0%</div>
             </div>
         </div>
 

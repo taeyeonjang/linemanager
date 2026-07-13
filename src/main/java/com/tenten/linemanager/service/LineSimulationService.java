@@ -53,6 +53,8 @@ public class LineSimulationService {
         //결과 판정
         ResultState result = randomResult();
 
+        if(processNo == 3) result = ResultState.NG;
+
         //ProcessLog, ProductCurrentResult update
         processLogService.updateProcessResult(processLog.getId(), result);
 

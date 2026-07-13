@@ -1,11 +1,9 @@
 package com.tenten.linemanager.Controller;
 
 import com.tenten.linemanager.domain.*;
+import com.tenten.linemanager.dto.HomeDto;
 import com.tenten.linemanager.dto.ProductStatusDto;
-import com.tenten.linemanager.service.LineSimulationService;
-import com.tenten.linemanager.service.ProcessLogService;
-import com.tenten.linemanager.service.ProductService;
-import com.tenten.linemanager.service.RosLogService;
+import com.tenten.linemanager.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +24,7 @@ public class LineServiceController {
     private final ProductService productService;
     private final ProcessLogService processLogService;
     private final RosLogService rosLogService;
+    private final HomeService homeService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -35,61 +34,43 @@ public class LineServiceController {
         List<RosLog> pendingRos = rosLogService.findByState(ResultState.INIT);
         List<RosLog> allRos = rosLogService.findAll();
 
-        long totalDone = doneProducts.size();
-        long okCount = doneProducts.stream().filter(p -> p.getFinalResult() == ResultState.OK).count();
-        long ngCount = doneProducts.stream().filter(p -> p.getFinalResult() == ResultState.NG).count();
-        String defectRate = totalDone == 0 ? "0.0"
-                : String.format("%.1f", (ngCount * 100.0 / totalDone));
-
         List<ProductStatusDto> runningStatus = new ArrayList<>(); //메인하면 공정 흐름 나타내기 위한 리스트
         List<ProductStatusDto> doneStatus = new ArrayList<>(); //완료제품 리스트
         List<ProductStatusDto> allStatus = new ArrayList<>();
 
+        HomeDto homeDto = HomeDto.from(doneProducts);
+
         for (Product product : runningProducts) {
             List<ProcessLog> logs = processLogService.findOne(product.getSerialNumber());
-            runningStatus.add(new ProductStatusDto(product.getSerialNumber(), product.getCurrentProcessNo(), product.getFinalResult(), logs, ResultState.INIT));
+            runningStatus.add(ProductStatusDto.from(product, logs));
         }
 
 
-        List<Product> recentDone = doneProducts.stream()
-                        .filter(p -> p.getCompletedAt() != null && p.getCompletedAt().isAfter(LocalDateTime.now().minusSeconds(5)))
-                        .toList();
+        List<Product> recentDone = homeService.recentDone(doneProducts);
 
-        List<Product> recentDoneList = doneProducts.stream()
-                        .filter(p -> p.getCompletedAt() != null)
-                        .sorted(Comparator.comparing(Product::getCompletedAt).reversed())
-                        .limit(10)
-                        .toList();
+        List<Product> recentDoneList = homeService.recentDoneList(doneProducts);
 
         for (Product product : recentDone) {
             List<ProcessLog> logs = processLogService.findOne(product.getSerialNumber());
-            doneStatus.add(new ProductStatusDto(product.getSerialNumber(), product.getCurrentProcessNo(), product.getFinalResult(), logs, ResultState.INIT));
+            doneStatus.add(ProductStatusDto.from(product, logs));
         }
 
         allStatus.addAll(runningStatus);
         allStatus.addAll(doneStatus);
 
         for (ProductStatusDto dto : allStatus) {
-            allRos.stream()
-                    .filter(r -> r.getProduct().getSerialNumber().equals(dto.getSerialNumber()))
-                    .findFirst()
-                    .ifPresent(r -> dto.setRosDecision(r.getOperatorDecision()));
+            homeService.allRos(allRos, dto);
         }
 
         model.addAttribute("waitingProducts", waitingProducts);
         model.addAttribute("runningStatus", runningStatus);
         model.addAttribute("pendingRos", pendingRos);
         model.addAttribute("doneStatus", doneStatus);
-        model.addAttribute("totalDone", totalDone);
-        model.addAttribute("okCount", okCount);
-        model.addAttribute("ngCount", ngCount);
-        model.addAttribute("defectRate", defectRate);
+        model.addAttribute("homeDto", homeDto);
         model.addAttribute("recentDoneList", recentDoneList);
 
         return "home";
     }
-
-
 
     @PostMapping("/prepare")
     public String prepare() {
@@ -110,6 +91,5 @@ public class LineServiceController {
         lineSimulationService.rosPopup(rosLogId, result);
         return "redirect:/";
     }
-
 
 }

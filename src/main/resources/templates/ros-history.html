@@ -147,15 +147,15 @@
     <div class="stat-row">
         <div class="stat-box">
             <div class="label">전체</div>
-            <div class="value" th:text="${#lists.size(allRosLogs)}">0</div>
+            <div class="value" th:text="${#lists.size(rosLogsDto.allRosLogs)}">0</div>
         </div>
         <div class="stat-box ok-box">
             <div class="label">OK 판정</div>
-            <div class="value" th:text="${rosOkCount}">0</div>
+            <div class="value" th:text="${rosLogsDto.okCount}">0</div>
         </div>
         <div class="stat-box ng-box">
             <div class="label">NG 판정</div>
-            <div class="value" th:text="${rosNgCount}">0</div>
+            <div class="value" th:text="${rosLogsDto.ngCount}">0</div>
         </div>
     </div>
 </div>
@@ -183,11 +183,11 @@
 <!-- 결과 테이블 -->
 <div class="card">
     <h2>ROS 이력</h2>
-    <p class="count-info" th:text="'총 ' + ${#lists.size(rosLogs)} + '건'"></p>
+    <p class="count-info" th:text="'총 ' + ${#lists.size(criteriaRosLogs)} + '건'"></p>
 
-    <p class="empty-msg" th:if="${#lists.isEmpty(rosLogs)}">조회된 이력이 없습니다</p>
+    <p class="empty-msg" th:if="${#lists.isEmpty(criteriaRosLogs)}">조회된 이력이 없습니다</p>
 
-    <table class="history-table" th:if="${not #lists.isEmpty(rosLogs)}">
+    <table class="history-table" th:if="${not #lists.isEmpty(criteriaRosLogs)}">
         <thead>
             <tr>
                 <th>S/N</th>
@@ -197,7 +197,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="log : ${rosLogs}">
+            <tr th:each="log : ${criteriaRosLogs}">
                 <td th:text="${log.product.serialNumber}"></td>
                 <td>
                     <span th:if="${log.operatorDecision != null and log.operatorDecision.name() == 'OK'}" class="badge badge-ok">OK</span>

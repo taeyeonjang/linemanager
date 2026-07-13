@@ -153,8 +153,8 @@
         <label>결과</label>
         <select name="result">
             <option value="">전체</option>
-            <option value="OK" th:selected="${param.result == 'OK'}">OK</option>
-            <option value="NG" th:selected="${param.result == 'NG'}">NG</option>
+            <option value="OK" th:selected="${param.allRosLogsDto.result == 'OK'}">OK</option>
+            <option value="NG" th:selected="${param.allRosLogsDto.result == 'NG'}">NG</option>
         </select>
 
         <button type="submit" class="btn-filter">조회</button>
