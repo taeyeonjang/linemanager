@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.boot.models.xml.internal.QueryProcessing;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 

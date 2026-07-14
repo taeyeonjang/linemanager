@@ -1,6 +1,10 @@
 package com.tenten.linemanager.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tenten.linemanager.config.QueryDslConfig;
 import com.tenten.linemanager.domain.ProcessLog;
+import com.tenten.linemanager.domain.QProcessLog;
 import com.tenten.linemanager.domain.ResultState;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -20,6 +24,11 @@ import java.util.Optional;
 public class ProcessLogRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
+
+    private final QProcessLog pl = QProcessLog.processLog;
+
+
 
     //저장
     public void save(ProcessLog processLog) {
@@ -50,30 +59,50 @@ public class ProcessLogRepository {
     }
 
     public List<ProcessLog> findByCriteria(String serialNumber, Integer processNo, ResultState result) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<ProcessLog> cq = cb.createQuery(ProcessLog.class);
-        Root<ProcessLog> pl = cq.from(ProcessLog.class);
+        QProcessLog pl = QProcessLog.processLog;
+        return queryFactory.selectFrom(pl)
+                .where(
+                        serialNumberEq(serialNumber),
+                        processNoEq(processNo),
+                        resultEq(result)
+                )
+                .fetch();
+//        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaQuery<ProcessLog> cq = cb.createQuery(ProcessLog.class);
+//        Root<ProcessLog> pl = cq.from(ProcessLog.class);
+//
+//        List<Predicate> criteria = new ArrayList<>();
+//
+//        if (StringUtils.hasText(serialNumber)) {
+//           Predicate serial = cb.equal(pl.get("product").get("serialNumber"), serialNumber);
+//           criteria.add(serial);
+//        }
+//
+//        if (processNo != null) {
+//           Predicate pNo = cb.equal(pl.get("processNo"), processNo);
+//            criteria.add(pNo);
+//        }
+//
+//        if (result != null) {
+//           Predicate pResult = cb.equal(pl.get("result"), result);
+//           criteria.add(pResult);
+//        }
+//
+//        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
+//
+//        return em.createQuery(cq).getResultList();
+    }
 
-        List<Predicate> criteria = new ArrayList<>();
+    private BooleanExpression serialNumberEq(String serialNumber) {
+        return StringUtils.hasText(serialNumber) ? pl.product.serialNumber.eq(serialNumber) : null;
+    }
 
-        if (StringUtils.hasText(serialNumber)) {
-           Predicate serial = cb.equal(pl.get("product").get("serialNumber"), serialNumber);
-           criteria.add(serial);
-        }
+    private BooleanExpression processNoEq(Integer processNo) {
+        return processNo != null ? pl.processNo.eq(processNo) : null;
+    }
 
-        if (processNo != null) {
-           Predicate pNo = cb.equal(pl.get("processNo"), processNo);
-            criteria.add(pNo);
-        }
-
-        if (result != null) {
-           Predicate pResult = cb.equal(pl.get("result"), result);
-           criteria.add(pResult);
-        }
-
-        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
-
-        return em.createQuery(cq).getResultList();
+    private BooleanExpression resultEq(ResultState result) {
+        return result != null ? pl.result.eq(result) : null;
     }
 
 

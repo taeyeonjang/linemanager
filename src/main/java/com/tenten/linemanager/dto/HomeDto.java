@@ -1,16 +1,16 @@
 package com.tenten.linemanager.dto;
 
 import com.tenten.linemanager.domain.Product;
-import com.tenten.linemanager.domain.ResultState;
-import lombok.AllArgsConstructor;
+import com.tenten.linemanager.domain.RosLog;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@Getter
+@Getter @Setter
 public class HomeDto {
 
     private long totalDone;
@@ -18,17 +18,16 @@ public class HomeDto {
     private long ngCount;
     private String defectRate;
 
-    public static HomeDto from(List<Product> doneProducts) {
+    private List<Product> waitingProducts;
+    private List<Product> runningProducts;
+    private List<Product> doneProducts;
+    private List<RosLog> pendingRos;
+    private List<RosLog> allRos;
 
-        HomeDto dto = new HomeDto();
 
-        dto.totalDone = doneProducts.size();
-        dto.okCount = doneProducts.stream().filter(p -> p.getFinalResult() == ResultState.OK).count();
-        dto.ngCount = doneProducts.stream().filter(p -> p.getFinalResult() == ResultState.NG).count();
-        dto.defectRate = dto.totalDone == 0 ? "0.0"
-                : String.format("%.1f", (dto.ngCount * 100.0 / dto.totalDone));
-
-        return dto;
-    }
+    private List<ProductStatusDto> runningStatus;
+    private List<ProductStatusDto> doneStatus;
+    private List<ProductStatusDto> allStatus;
+    private List<Product> recentDoneList;
 
 }

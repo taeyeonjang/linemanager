@@ -53,9 +53,9 @@ public class ProcessLogService {
         return processLogRepository.findByProductSerialNumber(serialNumber);
     }
 
-    @Transactional(readOnly = true)
-    public List<ProcessLog> findProcess(int processNo, ResultState result) {
-        return processLogRepository.findByProcessNoAndState(processNo, result);
-    }
+//    @Transactional(readOnly = true)
+//    public List<ProcessLog> findProcess(int processNo, ResultState result) {
+//        return processLogRepository.findByProcessNoAndState(processNo, result);
+//    }
 
 }
