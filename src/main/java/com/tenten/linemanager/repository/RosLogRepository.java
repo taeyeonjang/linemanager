@@ -63,33 +63,10 @@ public class RosLogRepository {
 
        return queryFactory.selectFrom(rl)
                .where(
-                       serialNumberEq(serialNumber),
+                       serialNumberEq(serialNumber.toUpperCase()),
                        resultEq(result)
                )
                .fetch();
-
-
-
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<RosLog> cq = cb.createQuery(RosLog.class);
-//        Root<RosLog> rl = cq.from(RosLog.class);
-//
-//
-//        List<Predicate> criteria = new ArrayList<>();
-//
-//        if (StringUtils.hasText(serialNumber)) {
-//            Predicate serialNum = cb.equal(rl.get("product").get("serialNumber"), serialNumber);
-//            criteria.add(serialNum);
-//        }
-//
-//        if (result != null) {
-//            Predicate rs = cb.equal(rl.get("operatorDecision"), result);
-//            criteria.add(rs);
-//        }
-//
-//        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
-//
-//        return em.createQuery(cq).getResultList();
     }
 
     private BooleanExpression serialNumberEq(String serialNumber) {

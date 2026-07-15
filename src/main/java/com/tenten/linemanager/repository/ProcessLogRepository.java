@@ -28,8 +28,6 @@ public class ProcessLogRepository {
 
     private final QProcessLog pl = QProcessLog.processLog;
 
-
-
     //저장
     public void save(ProcessLog processLog) {
         em.persist(processLog);
@@ -61,35 +59,11 @@ public class ProcessLogRepository {
     public List<ProcessLog> findByCriteria(String serialNumber, Integer processNo, ResultState result) {
         return queryFactory.selectFrom(pl)
                 .where(
-                        serialNumberEq(serialNumber),
+                        serialNumberEq(serialNumber.toUpperCase()),
                         processNoEq(processNo),
                         resultEq(result)
                 )
                 .fetch();
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<ProcessLog> cq = cb.createQuery(ProcessLog.class);
-//        Root<ProcessLog> pl = cq.from(ProcessLog.class);
-//
-//        List<Predicate> criteria = new ArrayList<>();
-//
-//        if (StringUtils.hasText(serialNumber)) {
-//           Predicate serial = cb.equal(pl.get("product").get("serialNumber"), serialNumber);
-//           criteria.add(serial);
-//        }
-//
-//        if (processNo != null) {
-//           Predicate pNo = cb.equal(pl.get("processNo"), processNo);
-//            criteria.add(pNo);
-//        }
-//
-//        if (result != null) {
-//           Predicate pResult = cb.equal(pl.get("result"), result);
-//           criteria.add(pResult);
-//        }
-//
-//        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
-//
-//        return em.createQuery(cq).getResultList();
     }
 
     private BooleanExpression serialNumberEq(String serialNumber) {
@@ -103,6 +77,4 @@ public class ProcessLogRepository {
     private BooleanExpression resultEq(ResultState result) {
         return result != null ? pl.result.eq(result) : null;
     }
-
-
 }

@@ -22,9 +22,26 @@ public class LineSimulationService {
 
     private final Queue<Product> waitingQueue = new LinkedList<>();
 
+    private boolean autoRunning = false;
+
     public void prepareProduct() {
         Product product = productService.createProduct();
         waitingQueue.add(product);
+    }
+
+    @Async
+    public void autoStart() throws InterruptedException {
+        if(waitingQueue.isEmpty()) {
+            Thread.sleep(1);
+        } else {
+            while(autoRunning){
+                Product product = waitingQueue.poll();
+                Long productId = product.getId();
+
+                productService.updateLineStatus(productId);
+                processStep(productId, 1);
+            }
+        }
     }
 
     @Async
