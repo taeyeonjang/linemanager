@@ -59,7 +59,6 @@ public class ProcessLogRepository {
     }
 
     public List<ProcessLog> findByCriteria(String serialNumber, Integer processNo, ResultState result) {
-        QProcessLog pl = QProcessLog.processLog;
         return queryFactory.selectFrom(pl)
                 .where(
                         serialNumberEq(serialNumber),

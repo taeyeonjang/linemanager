@@ -1,5 +1,9 @@
 package com.tenten.linemanager.repository;
 
+import com.querydsl.core.QueryFactory;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tenten.linemanager.domain.QRosLog;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
 import jakarta.persistence.EntityManager;
@@ -22,6 +26,8 @@ import java.util.Optional;
 public class RosLogRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
+    private final QRosLog rl = QRosLog.rosLog;
 
     //저장
     public void save(RosLog rosLog) {
@@ -54,25 +60,44 @@ public class RosLogRepository {
     }
 
     public List<RosLog> findByCriteria(String serialNumber, ResultState result) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<RosLog> cq = cb.createQuery(RosLog.class);
-        Root<RosLog> rl = cq.from(RosLog.class);
 
-        List<Predicate> criteria = new ArrayList<>();
+       return queryFactory.selectFrom(rl)
+               .where(
+                       serialNumberEq(serialNumber),
+                       resultEq(result)
+               )
+               .fetch();
 
-        if (StringUtils.hasText(serialNumber)) {
-            Predicate serialNum = cb.equal(rl.get("product").get("serialNumber"), serialNumber);
-            criteria.add(serialNum);
-        }
 
-        if (result != null) {
-            Predicate rs = cb.equal(rl.get("operatorDecision"), result);
-            criteria.add(rs);
-        }
 
-        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
+//        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaQuery<RosLog> cq = cb.createQuery(RosLog.class);
+//        Root<RosLog> rl = cq.from(RosLog.class);
+//
+//
+//        List<Predicate> criteria = new ArrayList<>();
+//
+//        if (StringUtils.hasText(serialNumber)) {
+//            Predicate serialNum = cb.equal(rl.get("product").get("serialNumber"), serialNumber);
+//            criteria.add(serialNum);
+//        }
+//
+//        if (result != null) {
+//            Predicate rs = cb.equal(rl.get("operatorDecision"), result);
+//            criteria.add(rs);
+//        }
+//
+//        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
+//
+//        return em.createQuery(cq).getResultList();
+    }
 
-        return em.createQuery(cq).getResultList();
+    private BooleanExpression serialNumberEq(String serialNumber) {
+        return StringUtils.hasText(serialNumber) ? rl.product.serialNumber.eq(serialNumber) : null;
+    }
+
+    private BooleanExpression resultEq(ResultState result ) {
+        return result != null ? rl.operatorDecision.eq(result) : null;
     }
 
 }
