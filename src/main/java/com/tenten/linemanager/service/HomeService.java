@@ -18,7 +18,7 @@ public class HomeService {
     private final ProductService productService;
     private final RosLogService rosLogService;
     private final ProcessLogService processLogService;
-
+    private final LineSimulationService lineSimulationService;
 
     public HomeDto getHomeData() {
 
@@ -29,6 +29,7 @@ public class HomeService {
         List<Product> doneProducts = productService.findByState(LineStatus.DONE);
         List<RosLog> pendingRos = rosLogService.findByState(ResultState.INIT);
         List<RosLog> allRos = rosLogService.findAll();
+        boolean autoRunning = lineSimulationService.getAutoRunning();
 
         List<ProductStatusDto> runningStatus = new ArrayList<>(); //메인하면 공정 흐름 나타내기 위한 리스트
         List<ProductStatusDto> doneStatus = new ArrayList<>(); //완료제품 리스트
@@ -69,6 +70,7 @@ public class HomeService {
         homeDto.setOkCount(okCount);
         homeDto.setNgCount(ngCount);
         homeDto.setDefectRate(defectRate);
+        homeDto.setAutoRunning(autoRunning);
 
         return homeDto;
     }

@@ -2,6 +2,7 @@ package com.tenten.linemanager.Controller;
 
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
+import com.tenten.linemanager.dto.PageDto;
 import com.tenten.linemanager.dto.RosStatusDto;
 import com.tenten.linemanager.service.RosLogService;
 import lombok.RequiredArgsConstructor;
@@ -21,18 +22,19 @@ public class RosLogController {
     @GetMapping("/history/ros")
     public String historyRos(@RequestParam(required = false) String serialNumber,
                              @RequestParam(required = false) ResultState result,
+                             @RequestParam(defaultValue = "1") int page,
                              Model model) {
 
 
         //allRosLogs rosOkCount rosNgCount
 
         RosStatusDto rosLogsDto = rosLogService.findAllDto();
-        List<RosLog> criteriaRosLogs = rosLogService.findByCriteria(serialNumber, result);
+        PageDto<RosLog> queryDslRosLogs = rosLogService.findByQueryDsl(serialNumber, result, page);
 
 
 
         model.addAttribute("rosLogsDto", rosLogsDto);
-        model.addAttribute("criteriaRosLogs", criteriaRosLogs);
+        model.addAttribute("queryDslRosLogs", queryDslRosLogs);
 
         return "ros-history";
     }

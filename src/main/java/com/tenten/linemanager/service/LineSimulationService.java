@@ -31,10 +31,11 @@ public class LineSimulationService {
 
     @Async
     public void autoStart() throws InterruptedException {
-        if(waitingQueue.isEmpty()) {
-            Thread.sleep(1);
-        } else {
-            while(autoRunning){
+        autoRunning = true;
+        while (autoRunning) {
+            if (waitingQueue.isEmpty()) {
+                Thread.sleep(10);
+            } else {
                 Product product = waitingQueue.poll();
                 Long productId = product.getId();
 
@@ -42,6 +43,10 @@ public class LineSimulationService {
                 processStep(productId, 1);
             }
         }
+    }
+
+    public void autoStop() throws InterruptedException {
+        autoRunning = false;
     }
 
     @Async
@@ -114,5 +119,9 @@ public class LineSimulationService {
         } else {
             return ResultState.NG;
         }
+    }
+
+    public boolean getAutoRunning() {
+        return autoRunning;
     }
 }

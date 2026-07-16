@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linemanager.domain.QRosLog;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
+import com.tenten.linemanager.dto.PageDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -28,6 +29,7 @@ public class RosLogRepository {
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
     private final QRosLog rl = QRosLog.rosLog;
+    private static final int PAGE_SIZE = 20;
 
     //저장
     public void save(RosLog rosLog) {
@@ -59,18 +61,34 @@ public class RosLogRepository {
                 .getResultList();
     }
 
-    public List<RosLog> findByCriteria(String serialNumber, ResultState result) {
+    public PageDto<RosLog> findByQueryDsl(String serialNumber, ResultState result, int page) {
 
-       return queryFactory.selectFrom(rl)
+        PageDto<RosLog> dto = new PageDto<>();
+        dto.setList(
+                queryFactory.selectFrom(rl)
                .where(
-                       serialNumberEq(serialNumber.toUpperCase()),
+                       serialNumberEq(serialNumber),
                        resultEq(result)
                )
-               .fetch();
+               .offset((page - 1) * PAGE_SIZE).limit(PAGE_SIZE)
+               .fetch()
+        );
+        dto.setCount(
+                queryFactory.selectFrom(rl)
+                .where(
+                        serialNumberEq(serialNumber),
+                        resultEq(result)
+                )
+                .fetchCount()
+        );
+
+        dto.setTotalPages((dto.getCount() + PAGE_SIZE - 1) / PAGE_SIZE);
+
+        return dto;
     }
 
     private BooleanExpression serialNumberEq(String serialNumber) {
-        return StringUtils.hasText(serialNumber) ? rl.product.serialNumber.eq(serialNumber) : null;
+        return StringUtils.hasText(serialNumber) ? rl.product.serialNumber.eq(serialNumber.toUpperCase()) : null;
     }
 
     private BooleanExpression resultEq(ResultState result ) {

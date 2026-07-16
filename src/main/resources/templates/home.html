@@ -51,6 +51,11 @@
         .btn:hover { opacity: 0.85; }
         .btn-prepare { background: #4CAF50; color: white; }
         .btn-start { background: #2196F3; color: white; }
+        .btn-ng {
+            background: #c62828;
+            color: white;
+        }
+        .btn-ng:hover { opacity: 0.85; }
 
         .card {
             background: white;
@@ -314,11 +319,19 @@
         <form th:action="@{/prepare}" method="post">
             <button type="submit" class="btn btn-prepare">제품 준비</button>
         </form>
+        <form th:action="@{/autoStart}" method="post">
+            <button type="submit" class="btn btn-start"
+                    th:disabled="${homeDto.autoRunning}"
+                    th:text="${homeDto.autoRunning} ? '오토 실행 중' : '오토 시작'"
+                    th:style="${homeDto.autoRunning} ? 'background:#4caf50;' : ''">오토 시작</button>
+        </form>
+        <form th:action="@{/autoStop}" method="post" th:if="${homeDto.autoRunning}">
+            <button type="submit" class="btn btn-ng">오토 중지</button>
+        </form>
         <form th:action="@{/start}" method="post">
-            <button type="submit" class="btn btn-start">라인 시작</button>
+            <button type="submit" class="btn btn-start">수동 시작</button>
         </form>
     </div>
-
     <div style="display:flex; gap:10px;">
         <a href="/history/process" target="_blank" class="btn btn-history">제품 이력</a>
         <a href="/history/ros" target="_blank" class="btn btn-history">ROS 이력</a>

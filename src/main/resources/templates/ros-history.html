@@ -183,11 +183,11 @@
 <!-- 결과 테이블 -->
 <div class="card">
     <h2>ROS 이력</h2>
-    <p class="count-info" th:text="'총 ' + ${#lists.size(criteriaRosLogs)} + '건'"></p>
+    <p class="count-info" th:text="'총 ' + ${#lists.size(queryDslRosLogs.list)} + '건'"></p>
 
-    <p class="empty-msg" th:if="${#lists.isEmpty(criteriaRosLogs)}">조회된 이력이 없습니다</p>
+    <p class="empty-msg" th:if="${#lists.isEmpty(queryDslRosLogs.list)}">조회된 이력이 없습니다</p>
 
-    <table class="history-table" th:if="${not #lists.isEmpty(criteriaRosLogs)}">
+    <table class="history-table" th:if="${not #lists.isEmpty(queryDslRosLogs.list)}">
         <thead>
             <tr>
                 <th>S/N</th>
@@ -197,7 +197,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="log : ${criteriaRosLogs}">
+            <tr th:each="log : ${queryDslRosLogs.list}">
                 <td th:text="${log.product.serialNumber}"></td>
                 <td>
                     <span th:if="${log.operatorDecision != null and log.operatorDecision.name() == 'OK'}" class="badge badge-ok">OK</span>
@@ -209,6 +209,15 @@
             </tr>
         </tbody>
     </table>
+</div>
+
+<div style="display:flex; gap:8px; justify-content:center; margin-top:16px;">
+    <a th:each="i : ${#numbers.sequence(1, queryDslRosLogs.totalPages)}"
+       th:href="@{/history/ros(serialNumber=${param.serialNumber}, result=${param.result}, page=${i})}"
+       th:text="${i}"
+       th:class="${i == param.page} ? 'btn btn-filter' : 'btn-reset'"
+       style="padding:6px 12px;">
+    </a>
 </div>
 
 </body>

@@ -3,6 +3,7 @@ package com.tenten.linemanager.service;
 import com.tenten.linemanager.domain.ProcessLog;
 import com.tenten.linemanager.domain.Product;
 import com.tenten.linemanager.domain.ResultState;
+import com.tenten.linemanager.dto.PageDto;
 import com.tenten.linemanager.repository.ProcessLogRepository;
 import com.tenten.linemanager.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,8 @@ public class ProcessLogService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProcessLog> findByCriteria(String serialNuber, Integer processNo, ResultState result) {
-        return processLogRepository.findByCriteria(serialNuber, processNo, result);
+    public PageDto<ProcessLog> findByQueryDsl(String serialNumber, Integer processNo, ResultState result, int page) {
+        return processLogRepository.findByQueryDsl(serialNumber, processNo, result, page);
     }
 
     @Transactional(readOnly = true)

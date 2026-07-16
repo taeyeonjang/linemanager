@@ -165,11 +165,11 @@
 <!-- 결과 테이블 -->
 <div class="card">
     <h2>공정 이력</h2>
-    <p class="count-info" th:text="'총 ' + ${#lists.size(processLogs)} + '건'"></p>
+    <p class="count-info" th:text="'총 ' + ${#lists.size(processLogs.list)} + '건'"></p>
 
-    <p class="empty-msg" th:if="${#lists.isEmpty(processLogs)}">조회된 이력이 없습니다</p>
+    <p class="empty-msg" th:if="${#lists.isEmpty(processLogs.list)}">조회된 이력이 없습니다</p>
 
-    <table class="history-table" th:if="${not #lists.isEmpty(processLogs)}">
+    <table class="history-table" th:if="${not #lists.isEmpty(processLogs.list)}">
         <thead>
             <tr>
                 <th>S/N</th>
@@ -179,7 +179,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="log : ${processLogs}">
+            <tr th:each="log : ${processLogs.list}">
                 <td th:text="${log.product.serialNumber}"></td>
                 <td><span class="process-tag" th:text="${log.processNo} + '번'"></span></td>
                 <td>
@@ -190,6 +190,16 @@
             </tr>
         </tbody>
     </table>
+</div>
+
+<!-- 페이지 버튼 -->
+<div style="display:flex; gap:8px; justify-content:center; margin-top:16px;">
+    <a th:each="i : ${#numbers.sequence(1, processLogs.totalPages)}"
+       th:href="@{/history/process(serialNumber=${param.serialNumber}, processNo=${param.processNo}, result=${param.result}, page=${i})}"
+       th:text="${i}"
+       th:class="${i == param.page} ? 'btn btn-filter' : 'btn-reset'"
+       style="padding:6px 12px;">
+    </a>
 </div>
 
 </body>

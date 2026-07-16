@@ -39,6 +39,19 @@ public class LineServiceController {
         return "redirect:/";
     }
 
+    @PostMapping("/autoStart")
+    public String autoStart() throws InterruptedException {
+        lineSimulationService.autoStart();
+        Thread.sleep(500); // 0.5초 대기
+        return "redirect:/";
+    }
+
+    @PostMapping("/autoStop")
+    public String autoStop() throws InterruptedException {
+        lineSimulationService.autoStop();
+        return "redirect:/";
+    }
+
     @PostMapping("/ros")
     public String ros(@RequestParam Long rosLogId, @RequestParam String decision) {
         ResultState result = ResultState.valueOf(decision);

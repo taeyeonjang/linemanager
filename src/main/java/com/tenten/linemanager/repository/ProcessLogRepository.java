@@ -6,6 +6,7 @@ import com.tenten.linemanager.config.QueryDslConfig;
 import com.tenten.linemanager.domain.ProcessLog;
 import com.tenten.linemanager.domain.QProcessLog;
 import com.tenten.linemanager.domain.ResultState;
+import com.tenten.linemanager.dto.PageDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -25,8 +26,8 @@ public class ProcessLogRepository {
 
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
-
     private final QProcessLog pl = QProcessLog.processLog;
+    private static final int PAGE_SIZE = 20;
 
     //저장
     public void save(ProcessLog processLog) {
@@ -41,6 +42,7 @@ public class ProcessLogRepository {
         return em.createQuery("select pl from ProcessLog pl", ProcessLog.class)
                 .getResultList();
     }
+
     //시리얼넘버 조회
     public List<ProcessLog> findByProductSerialNumber(String serialNumber) {
         return em.createQuery("select pl from ProcessLog pl where pl.product.serialNumber = :sn", ProcessLog.class)
@@ -56,18 +58,34 @@ public class ProcessLogRepository {
                 .getResultList();
     }
 
-    public List<ProcessLog> findByCriteria(String serialNumber, Integer processNo, ResultState result) {
-        return queryFactory.selectFrom(pl)
-                .where(
-                        serialNumberEq(serialNumber.toUpperCase()),
-                        processNoEq(processNo),
-                        resultEq(result)
-                )
-                .fetch();
+    public PageDto<ProcessLog> findByQueryDsl(String serialNumber, Integer processNo, ResultState result, int page) {
+        PageDto<ProcessLog> dto = new PageDto<>();
+        dto.setList(
+                queryFactory.selectFrom(pl)
+                        .where(
+                                serialNumberEq(serialNumber),
+                                processNoEq(processNo),
+                                resultEq(result)
+                        )
+                        .offset((page - 1) * PAGE_SIZE).limit(PAGE_SIZE)
+                        .fetch()
+        );
+        dto.setCount(
+                queryFactory.selectFrom(pl)
+                        .where(
+                                serialNumberEq(serialNumber),
+                                processNoEq(processNo),
+                                resultEq(result)
+                        )
+                        .fetchCount()
+        );
+        dto.setTotalPages((dto.getCount() + PAGE_SIZE - 1) / PAGE_SIZE);
+        return dto;
     }
 
+
     private BooleanExpression serialNumberEq(String serialNumber) {
-        return StringUtils.hasText(serialNumber) ? pl.product.serialNumber.eq(serialNumber) : null;
+        return StringUtils.hasText(serialNumber) ? pl.product.serialNumber.eq(serialNumber.toUpperCase()) : null;
     }
 
     private BooleanExpression processNoEq(Integer processNo) {

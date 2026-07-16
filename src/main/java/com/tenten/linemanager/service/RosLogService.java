@@ -3,6 +3,7 @@ package com.tenten.linemanager.service;
 import com.tenten.linemanager.domain.Product;
 import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
+import com.tenten.linemanager.dto.PageDto;
 import com.tenten.linemanager.dto.RosStatusDto;
 import com.tenten.linemanager.repository.ProductRepository;
 import com.tenten.linemanager.repository.RosLogRepository;
@@ -56,8 +57,8 @@ public class RosLogService {
         return rosLogRepository.findAll();
     }
 
-    public List<RosLog> findByCriteria(String serialNumber, ResultState result) {
-        return rosLogRepository.findByCriteria(serialNumber, result);
+    public PageDto<RosLog> findByQueryDsl(String serialNumber, ResultState result, int page) {
+        return rosLogRepository.findByQueryDsl(serialNumber, result, page);
     }
 
     public RosStatusDto findAllDto() {

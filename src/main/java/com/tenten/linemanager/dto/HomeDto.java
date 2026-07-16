@@ -17,6 +17,7 @@ public class HomeDto {
     private long okCount;
     private long ngCount;
     private String defectRate;
+    private boolean autoRunning;
 
     private List<Product> waitingProducts;
     private List<Product> runningProducts;

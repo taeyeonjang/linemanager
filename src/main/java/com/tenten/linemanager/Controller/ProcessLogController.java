@@ -2,6 +2,7 @@ package com.tenten.linemanager.Controller;
 
 import com.tenten.linemanager.domain.ProcessLog;
 import com.tenten.linemanager.domain.ResultState;
+import com.tenten.linemanager.dto.PageDto;
 import com.tenten.linemanager.service.ProcessLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -23,9 +24,10 @@ public class ProcessLogController {
         @RequestParam(required = false) String serialNumber,
         @RequestParam(required = false) Integer processNo,
         @RequestParam(required = false) ResultState result,
+        @RequestParam(defaultValue = "1") int page,
         Model model)
     {
-        List<ProcessLog> processLogs = processLogService.findByCriteria(serialNumber, processNo, result);
+        PageDto<ProcessLog> processLogs = processLogService.findByQueryDsl(serialNumber, processNo, result, page);
 
         model.addAttribute("processLogs", processLogs);
         return "process-history";
