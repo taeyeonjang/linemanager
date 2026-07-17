@@ -22,7 +22,7 @@ public class LineSimulationService {
 
     private final Queue<Product> waitingQueue = new LinkedList<>();
 
-    private boolean autoRunning = false;
+    private volatile boolean autoRunning = false;
 
     public void prepareProduct() {
         Product product = productService.createProduct();
@@ -45,7 +45,7 @@ public class LineSimulationService {
         }
     }
 
-    public void autoStop() throws InterruptedException {
+    public void autoStop() {
         autoRunning = false;
     }
 

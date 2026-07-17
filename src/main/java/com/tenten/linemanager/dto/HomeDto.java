@@ -20,15 +20,11 @@ public class HomeDto {
     private boolean autoRunning;
 
     private List<Product> waitingProducts;
-    private List<Product> runningProducts;
-    private List<Product> doneProducts;
     private List<RosLog> pendingRos;
-    private List<RosLog> allRos;
 
 
     private List<ProductStatusDto> runningStatus;
     private List<ProductStatusDto> doneStatus;
-    private List<ProductStatusDto> allStatus;
     private List<Product> recentDoneList;
 
 }

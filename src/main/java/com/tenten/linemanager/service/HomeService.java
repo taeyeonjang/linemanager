@@ -61,7 +61,6 @@ public class HomeService {
                 : String.format("%.1f", (ngCount * 100.0 / totalDone));
 
         homeDto.setWaitingProducts(waitingProducts);
-        homeDto.setRunningProducts(runningProducts);
         homeDto.setPendingRos(pendingRos);
         homeDto.setDoneStatus(doneStatus);
         homeDto.setRecentDoneList(recentDoneList);
@@ -77,14 +76,14 @@ public class HomeService {
 
 
 
-    public List<Product> recentDone(List<Product> doneProducts) {
+    private List<Product> recentDone(List<Product> doneProducts) {
 
         return doneProducts.stream()
                 .filter(p -> p.getCompletedAt() != null && p.getCompletedAt()
                         .isAfter(LocalDateTime.now().minusSeconds(5))).toList();
     }
 
-    public List<Product> recentDoneList(List<Product> doneProducts) {
+    private List<Product> recentDoneList(List<Product> doneProducts) {
 
         return doneProducts.stream()
                 .filter(p -> p.getCompletedAt() != null)
@@ -93,7 +92,7 @@ public class HomeService {
                 .toList();
     }
 
-    public void allRos(List<RosLog> rosLogs, ProductStatusDto dto) {
+    private void allRos(List<RosLog> rosLogs, ProductStatusDto dto) {
         rosLogs.stream()
                 .filter(r -> r.getProduct().getSerialNumber().equals(dto.getSerialNumber()))
                 .findFirst()

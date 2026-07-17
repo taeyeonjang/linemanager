@@ -47,7 +47,7 @@ public class LineServiceController {
     }
 
     @PostMapping("/autoStop")
-    public String autoStop() throws InterruptedException {
+    public String autoStop() {
         lineSimulationService.autoStop();
         return "redirect:/";
     }

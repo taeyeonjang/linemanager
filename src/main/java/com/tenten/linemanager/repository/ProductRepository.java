@@ -3,9 +3,7 @@ package com.tenten.linemanager.repository;
 import com.tenten.linemanager.domain.LineStatus;
 import com.tenten.linemanager.domain.Product;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -1,6 +1,5 @@
 package com.tenten.linemanager.repository;
 
-import com.querydsl.core.QueryFactory;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linemanager.domain.QRosLog;
@@ -8,17 +7,10 @@ import com.tenten.linemanager.domain.ResultState;
 import com.tenten.linemanager.domain.RosLog;
 import com.tenten.linemanager.dto.PageDto;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.boot.models.xml.internal.QueryProcessing;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.xml.transform.Result;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
