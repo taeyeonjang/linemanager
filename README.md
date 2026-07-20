@@ -97,7 +97,11 @@ RosLog (ROS 이력)
 ```bash
 git clone https://github.com/taeyeonjang/linemanager.git
 cd linemanager
+# macOS / Linux
 ./gradlew bootRun
+
+# Windows
+gradlew bootRun
 ```
 
 브라우저에서 `http://localhost:8080` 접속
